@@ -1,5 +1,4 @@
-import { Table, Column, Model, DataType } from "sequelize-typescript";
-import { Optional } from "sequelize";
+import { DataTypes, Model, Optional, Sequelize } from "sequelize";
 
 export interface FoodAttributes {
   id: number;
@@ -21,57 +20,94 @@ export interface FoodAttributes {
 export interface FoodCreationAttributes
   extends Optional<FoodAttributes, "id" | "createdAt" | "updatedAt"> {}
 
-@Table({ tableName: "foods", timestamps: true })
 export class Food
   extends Model<FoodAttributes, FoodCreationAttributes>
   implements FoodAttributes
 {
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
-  id!: number;
+  public id!: number;
+  public name!: string;
+  public brand?: string;
+  public servingSize?: number;
+  public servingUnit?: string;
+  public calories?: number;
+  public protein?: number;
+  public carbs?: number;
+  public fat?: number;
+  public fiber?: number;
+  public sugar?: number;
+  public sodium?: number;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  name!: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 
-  @Column(DataType.STRING)
-  brand?: string;
-
-  @Column(DataType.FLOAT)
-  servingSize?: number;
-
-  @Column(DataType.STRING)
-  servingUnit?: string;
-
-  @Column(DataType.FLOAT)
-  calories?: number;
-
-  @Column(DataType.FLOAT)
-  protein?: number;
-
-  @Column(DataType.FLOAT)
-  carbs?: number;
-
-  @Column(DataType.FLOAT)
-  fat?: number;
-
-  @Column(DataType.FLOAT)
-  fiber?: number;
-
-  @Column(DataType.FLOAT)
-  sugar?: number;
-
-  @Column(DataType.FLOAT)
-  sodium?: number;
-
-  @Column(DataType.DATE)
-  createdAt?: Date;
-
-  @Column(DataType.DATE)
-  updatedAt?: Date;
+  static initialize(sequelize: Sequelize) {
+    Food.init(
+      {
+        id: {
+          type: DataTypes.INTEGER.UNSIGNED,
+          autoIncrement: true,
+          primaryKey: true,
+        },
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        brand: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        servingSize: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        servingUnit: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        calories: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        protein: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        carbs: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        fat: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        fiber: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        sugar: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        sodium: {
+          type: DataTypes.FLOAT,
+          allowNull: true,
+        },
+        createdAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW,
+        },
+        updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW,
+        },
+      },
+      {
+        sequelize,
+        tableName: "foods",
+        timestamps: true,
+      }
+    );
+  }
 }
