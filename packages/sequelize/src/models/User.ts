@@ -1,52 +1,57 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import sequelize from "../db";
+import { Optional } from "sequelize";
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  PrimaryKey,
+  AutoIncrement,
+  Unique,
+  AllowNull,
+  CreatedAt,
+  UpdatedAt,
+} from "sequelize-typescript";
 
-interface UserAttributes {
+export interface UserAttributes {
   id: number;
   name: string;
   email: string;
   password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+export interface UserCreationAttributes
+  extends Optional<UserAttributes, "id" | "createdAt" | "updatedAt"> {}
 
+@Table({ tableName: "users", timestamps: true })
 export class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: number;
-  public name!: string;
-  public email!: string;
-  public password!: string;
+  @PrimaryKey
+  @AutoIncrement
+  @Column(DataType.INTEGER.UNSIGNED)
+  id!: number;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  @AllowNull(false)
+  @Column(DataType.STRING(128))
+  name!: string;
+
+  @AllowNull(false)
+  @Unique
+  @Column(DataType.STRING(128))
+  email!: string;
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  password!: string;
+
+  @CreatedAt
+  @Column({ field: "createdAt" })
+  readonly createdAt!: Date;
+
+  @UpdatedAt
+  @Column({ field: "updatedAt" })
+  readonly updatedAt!: Date;
 }
-
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-    },
-    email: {
-      type: DataTypes.STRING(128),
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    tableName: "users",
-    sequelize,
-    timestamps: true,
-  }
-);
